@@ -6,7 +6,7 @@ import base64
 import json
 
 server = os.environ.get('DEFORUM_STUDIO_SERVER', "https://deforum.studio")
-api_url = f'{server}/api/public/v1/audiovis1'
+api_url = f'{server}/api/public/v1/shroom'
 DEFORUM_STUDIO_API_KEY = os.environ.get('DEFORUM_STUDIO_API_KEY')
 
 if not DEFORUM_STUDIO_API_KEY:
@@ -20,24 +20,20 @@ headers = {
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Deforum Studio simple audio visualisation API example.")
-    parser.add_argument("audio_file", help="path to the audio file to visualise", type=str,)
+    parser = argparse.ArgumentParser(description="Deforum Studio animation API example.")
+    parser.add_argument("--prompt", "-p", help="text prompt for your animation", type=str, required=True, action="store")
     args = parser.parse_args()
-
-    if not os.path.exists(args.audio_file):
-        print(f"Error: file {args.audio_file} does not exist.")
-        exit(2)
 
     print("Submitting job...")
     response = requests.post(api_url, headers=headers, json={
-        "audioData": file_to_base64(args.audio_file)
+        "prompt": args.prompt,
         # --- optional args: ---
-        # presetName: '__[RANDOM]__',
+        # negativePrompt: 'blurry, nsfw',
+        # batch: 2,
+        # steps: 18,
+        # cfg: 4,
         # width: 1024,
         # height: 1024,
-        # fps: 30,
-        # crf: 23,
-        # beatSensitivity: 2.0,
     })
 
     if response.status_code != 201:
@@ -47,7 +43,7 @@ def main():
     data = response.json()
     print(json.dumps(data, indent=2))
 
-    tracking_url = f"{server}{data['links']['audiovis1']}"
+    tracking_url = f"{server}{data['links']['shroom']}"
 
     print(f"Job submitted successfully. Tracking URL: {tracking_url}")
 
@@ -69,7 +65,7 @@ def main():
     if tracking_data['status'] != 'succeeded':
         print(f"Job ended with status: {tracking_data['status']}")
     else:
-        print(f"Job succeeded. Access the result here: {tracking_data['links']['outputUrls'][0]}")
+        print(f"Job succeeded. Access the result here: {tracking_data['links']['outputUrls']}")
 
 
 def file_to_base64(filepath):

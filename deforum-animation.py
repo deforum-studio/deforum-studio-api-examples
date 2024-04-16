@@ -5,7 +5,7 @@ import argparse
 import base64
 import json
 
-server = "https://deforum.studio"
+server = os.environ.get('DEFORUM_STUDIO_SERVER', "https://deforum.studio")
 api_url = f'{server}/api/public/v1/animation'
 DEFORUM_STUDIO_API_KEY = os.environ.get('DEFORUM_STUDIO_API_KEY')
 

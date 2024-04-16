@@ -5,7 +5,7 @@ import argparse
 import base64
 import json
 
-server = "https://deforum.studio"
+server = os.environ.get('DEFORUM_STUDIO_SERVER', "https://deforum.studio")
 api_url = f'{server}/api/public/v1/image'
 DEFORUM_STUDIO_API_KEY = os.environ.get('DEFORUM_STUDIO_API_KEY')
 
@@ -65,7 +65,7 @@ def main():
     if tracking_data['status'] != 'succeeded':
         print(f"Job ended with status: {tracking_data['status']}")
     else:
-        print(f"Job succeeded. Access the result here: {tracking_data['links']['imageUrls']}")
+        print(f"Job succeeded. Access the result here: {tracking_data['links']['outputUrls']}")
 
 
 def file_to_base64(filepath):
